@@ -23,6 +23,26 @@ if GROQ_API_KEY:
 
 def fetch_snapshot_proposal(proposal_id: str) -> dict:
     """Fetch proposal from Snapshot GraphQL API"""
+    # Validate proposal ID format
+    if not proposal_id:
+        return {"error": "Proposal ID cannot be empty"}
+    
+    # Remove any whitespace
+    proposal_id = proposal_id.strip()
+    
+    # Check if it's a valid hex string
+    if not proposal_id.startswith("0x"):
+        return {"error": "Proposal ID must start with '0x'"}
+    
+    if len(proposal_id) != 66:  # 0x + 64 hex characters
+        return {"error": f"Proposal ID must be 66 characters long (0x + 64 hex digits). Got {len(proposal_id)} characters."}
+    
+    # Check if all characters after 0x are valid hex
+    try:
+        int(proposal_id, 16)
+    except ValueError:
+        return {"error": "Proposal ID must contain only hexadecimal characters (0-9, a-f)"}
+    
     url = "https://hub.snapshot.org/graphql"
     
     query = """
@@ -162,6 +182,26 @@ Provide your analysis in this format:
 
 def fetch_contract_source_code(contract_address: str) -> dict:
     """Fetch contract source code from Etherscan V2 API"""
+    # Validate contract address
+    if not contract_address:
+        return {"error": "Contract address cannot be empty"}
+    
+    # Remove any whitespace
+    contract_address = contract_address.strip()
+    
+    # Check format
+    if not contract_address.startswith("0x"):
+        return {"error": "Contract address must start with '0x'"}
+    
+    if len(contract_address) != 42:  # 0x + 40 hex characters
+        return {"error": f"Contract address must be 42 characters long (0x + 40 hex digits). Got {len(contract_address)} characters."}
+    
+    # Check if valid hex
+    try:
+        int(contract_address, 16)
+    except ValueError:
+        return {"error": "Contract address must contain only hexadecimal characters (0-9, a-f)"}
+    
     if not ETHERSCAN_API_KEY:
         return {
             "error": "Etherscan API key not configured",
@@ -410,6 +450,38 @@ def analyze_contract_security(source_code: str, contract_info: dict) -> dict:
             "description": "Use of blockhash for randomness",
             "details": "Miners have partial control over blockhash, making it unsuitable for generating random numbers. Can be manipulated for profit in gambling contracts.",
             "recommendation": "Use Chainlink VRF or similar oracle solutions for secure randomness."
+        },
+        "Outdated Compiler Version": {
+            "pattern": r"pragma solidity\s+[\^<>=]*0\.[0-6]\.",
+            "severity": "MEDIUM",
+            "category": "Code Quality",
+            "description": "Very outdated compiler version (< 0.7.0)",
+            "details": "Using very old Solidity versions means missing out on important security fixes, optimizations, and features. Versions before 0.7.0 lack many safety improvements.",
+            "recommendation": "Upgrade to Solidity 0.8.0 or later for built-in overflow protection and better security."
+        },
+        "Unchecked External Call": {
+            "pattern": r"\.call\((?:[^)]*)\)(?!\s*;?\s*require)",
+            "severity": "HIGH",
+            "category": "Error Handling",
+            "description": "External call without checking return value",
+            "details": "Low-level calls (.call, .delegatecall, .callcode) return false on failure but don't revert. If not checked, the contract continues execution after a failed call.",
+            "recommendation": "Always check the return value: (bool success, ) = target.call(...); require(success);"
+        },
+        "State Variable Shadowing": {
+            "pattern": r"contract\s+\w+\s+is\s+.*\{\s*(?:[^}]*\n)*\s*(?:uint|address|bool|string|bytes)\s+(\w+)\s*;",
+            "severity": "MEDIUM",
+            "category": "Code Quality",
+            "description": "Potential state variable shadowing",
+            "details": "When a derived contract declares a state variable with the same name as one in the base contract, it can cause confusion and bugs.",
+            "recommendation": "Use unique variable names and carefully review inheritance hierarchies."
+        },
+        "Missing Event for Critical Operation": {
+            "pattern": r"function\s+(?:transferOwnership|setOwner|changeOwner)",
+            "severity": "LOW",
+            "category": "Code Quality",
+            "description": "Critical operation without event emission",
+            "details": "Important state changes should emit events for off-chain tracking and transparency. Missing events make it harder to monitor critical operations.",
+            "recommendation": "Emit events for all critical state changes, especially ownership transfers."
         }
     }
     

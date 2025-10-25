@@ -94,7 +94,18 @@ with st.sidebar:
     - Analyze DAO proposals from Snapshot
     - Scan smart contracts for vulnerabilities
     - Provide risk assessments
-    - Store historical data for pattern recognition
+    - Detect 20+ vulnerability patterns
+    """)
+    st.markdown("---")
+    st.markdown("### 💡 Quick Tips")
+    st.success("""
+    **Finding Proposals:**
+    1. Visit [snapshot.org](https://snapshot.org)
+    2. Find a proposal you want to analyze
+    3. Copy the ID from the URL
+    4. Paste it in the input field
+    
+    **Example:** `0xf06f3ad...` (66 chars)
     """)
     st.markdown("---")
     st.markdown("### 🤖 Powered By")
@@ -119,6 +130,19 @@ if analysis_mode == "📊 Proposal Analysis":
     
     with col2:
         analyze_btn = st.button("🔍 Analyze Proposal", width="stretch", type="primary")
+    
+    # Quick example buttons
+    st.caption("📌 **Try an example:**")
+    col_ex1, col_ex2, col_ex3 = st.columns(3)
+    with col_ex1:
+        if st.button("ENS Proposal", width="stretch"):
+            proposal_id = "0xf06f3ad61f9f77c8ed362dd54913cc44d030841eebebfffce4dd6605b1b0e6f3"
+            st.rerun()
+    with col_ex2:
+        if st.button("Find on Snapshot", width="stretch"):
+            st.markdown("[🔗 Open Snapshot.org](https://snapshot.org)")
+    with col_ex3:
+        st.markdown("")  # Placeholder for alignment
     
     if analyze_btn and proposal_id:
         with st.spinner("🔄 Fetching proposal from Snapshot..."):
@@ -181,6 +205,20 @@ elif analysis_mode == "🔒 Contract Security":
     
     with col2:
         scan_btn = st.button("🔍 Scan Contract", width="stretch", type="primary")
+    
+    # Quick example buttons
+    st.caption("📌 **Try an example:**")
+    col_ex1, col_ex2, col_ex3 = st.columns(3)
+    with col_ex1:
+        if st.button("USDC Contract", key="usdc", width="stretch"):
+            contract_address = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+            st.rerun()
+    with col_ex2:
+        if st.button("DAI Contract", key="dai", width="stretch"):
+            contract_address = "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+            st.rerun()
+    with col_ex3:
+        st.markdown("")  # Placeholder
     
     if scan_btn and contract_address:
         with st.spinner("🔄 Fetching contract source from Etherscan..."):
