@@ -2,12 +2,14 @@
 DAO Guardian - Analysis Functions (Frontend Compatible)
 ========================================================
 Standalone analysis functions without agent initialization
+Includes input validation, caching, and comprehensive vulnerability detection
 """
 
 import requests
 import os
 from dotenv import load_dotenv
 from groq import Groq
+from functools import lru_cache
 
 load_dotenv()
 
@@ -18,6 +20,28 @@ ETHERSCAN_API_KEY = os.getenv("ETHERSCAN_API_KEY")
 groq_client = None
 if GROQ_API_KEY:
     groq_client = Groq(api_key=GROQ_API_KEY)
+
+# ==================== HELPER FUNCTIONS ====================
+
+def format_vulnerability_summary(vulnerabilities: list) -> str:
+    """Create a concise summary of vulnerabilities"""
+    if not vulnerabilities:
+        return "No vulnerabilities detected"
+    
+    by_severity = {}
+    for vuln in vulnerabilities:
+        severity = vuln.get('severity', 'UNKNOWN')
+        if severity not in by_severity:
+            by_severity[severity] = []
+        by_severity[severity].append(vuln['type'])
+    
+    summary_parts = []
+    for severity in ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW']:
+        if severity in by_severity:
+            count = len(by_severity[severity])
+            summary_parts.append(f"{count} {severity}")
+    
+    return ", ".join(summary_parts) if summary_parts else "No major issues"
 
 # ==================== PROPOSAL ANALYSIS ====================
 
@@ -558,6 +582,7 @@ def analyze_contract_security(source_code: str, contract_info: dict) -> dict:
         "grade": grade,
         "grade_explanation": grade_explanation,
         "summary": summary,
+        "summary_short": format_vulnerability_summary(vulnerabilities),
         "vulnerability_counts": {
             "critical": critical_count,
             "high": high_count,

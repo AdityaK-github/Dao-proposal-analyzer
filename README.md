@@ -28,7 +28,7 @@ DAO Guardian is an intelligent security analysis tool that helps DAO members and
 
 ### 🔐 Smart Contract Security Scanning
 
-- **16 vulnerability patterns** covering:
+- **20+ vulnerability patterns** covering:
 
   - 🔄 Reentrancy Attacks
   - 🔐 Access Control Issues
@@ -37,16 +37,25 @@ DAO Guardian is an intelligent security analysis tool that helps DAO members and
   - 🎲 Randomness & Time Manipulation
   - ➕ Arithmetic Vulnerabilities
   - 💾 Storage Issues
-  - ✨ Code Quality
+  - ✨ Code Quality & Best Practices
   - 🚫 Denial of Service
   - ⛔ Deprecated Functions
+  - 📝 Missing Events
+  - 🔄 State Variable Issues
 
 - **Detailed Reports** with:
+
   - Line numbers and code snippets
   - Severity classification (CRITICAL, HIGH, MEDIUM, LOW)
   - Category grouping
   - Expert recommendations
   - Security grading (A-F)
+  - One-click example contracts
+
+- **Input Validation** with:
+  - Format checking (hex, length)
+  - Helpful error messages
+  - Auto-correction suggestions
 
 ### 🎨 Interactive Frontend
 

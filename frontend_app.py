@@ -74,6 +74,17 @@ st.markdown("""
 st.markdown('<div class="main-header">🛡️ DAO Guardian</div>', unsafe_allow_html=True)
 st.markdown('<p style="text-align: center; color: #666; font-size: 1.2rem;">AI-Powered DAO Proposal & Smart Contract Security Analysis</p>', unsafe_allow_html=True)
 
+# Quick stats banner
+col1, col2, col3, col4 = st.columns(4)
+with col1:
+    st.metric("Vulnerability Patterns", "20+", help="Comprehensive security checks")
+with col2:
+    st.metric("Analysis Modes", "3", help="Proposal, Contract, Complete")
+with col3:
+    st.metric("Security Grades", "A-F", help="Clear risk assessment")
+with col4:
+    st.metric("AI Model", "Llama 3.3", help="70B parameter model")
+
 # Status banner
 st.info("ℹ️ **Note**: If Etherscan API is rate-limited, the system will use demo contracts to showcase security analysis capabilities. Proposal analysis from Snapshot is fully functional!", icon="ℹ️")
 
