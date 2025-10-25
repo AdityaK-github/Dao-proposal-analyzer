@@ -1,0 +1,20 @@
+# Core uAgent dependencies
+uagents>=0.12.0
+cosmpy
+pydantic>=2.0.0
+
+# For API requests (Milestone 2)
+requests
+
+# For LLM integration (Milestone 3)
+openai
+groq>=0.32.0
+
+# For security analysis (Milestone 5)
+# Note: Slither needs to be installed separately via: pip install slither-analyzer
+
+# For MeTTa integration (Milestone 6)
+hyperon>=0.2.6
+
+# Utility libraries
+python-dotenv
